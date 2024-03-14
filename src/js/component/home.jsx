@@ -1,38 +1,3 @@
-/* import React, {useState} from "react";
-
-
-//create your first component
-const Home = () => {
-
-	const [inputValue, setInputValue] = useState("");
-	const [todos, setTodos] = useState([]);
-
-	
-
-	return (
-		<div className="container">
-		 <h1>to do list </h1>
-		 <ul>
-			<li>
-				<input type="text" 
-				onChange={(e) => setInputValue(e.target.value)}
-				value={inputValue}
-				onKeyPress={(e) => e.keyCode == 13 ? setTodos (todos.concat(inputValue)) : null}
-				placeholder="what do you have to do?" />
-			</li>
-			<li>have lunch</li>
-			<li>got to the gym</li>
-			<li>read</li>
-			<li>colorgrading</li>
-		 </ul>
-		 <div className="tasksLeft">
-			7 tasks left
-		 </div>
-		</div>
-	);
-};
-
-export default Home; */
 
 import React, { useState } from 'react';
 
