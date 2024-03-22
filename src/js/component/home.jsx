@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 
 function TodoList() {
@@ -51,15 +50,16 @@ function TodoList() {
 		});
 	}
 
-	const updateInfo = () => {
+	const updateInfo = (task) => {
 		fetch('https://playground.4geeks.com/apis/fake/todos/user/dreisup',{
 			method: "PUT",
-			body: JSON.stringify(tasks),
+			body: JSON.stringify(task),
 			headers: {
 				"Content-Type": "application/json"
 			}
 		})
 		.then(resp => {
+			console.log(resp)
 			return resp.json();
 		})
 		.then(data => {
@@ -71,29 +71,30 @@ function TodoList() {
 	}
 
 	const deleteInfo = () => {
-		fetch ('https://playground.4geeks.com/apis/fake/todos/user/dreisup',{
-		method: "DELETE",
-		body: JSON.stringify(tasks),
-		headers: {
-			"Content-Type": "application/json"
-			}
-		}
-	
-		.then(resp => {
+		fetch('https://playground.4geeks.com/apis/fake/todos/user/dreisup', {
+		  method: 'DELETE',
+		  body: JSON.stringify(tasks),
+		  headers: {
+			'Content-Type': 'application/json'
+		  }
+		})
+		  .then(resp => {
 			console.log(resp.status);
-			if (resp.status === 200){
-				console.log("crafting a new user")
-				createUser()
-				setTasks([])
+			if (resp.status === 200) {
+			  console.log('Eliminación de tareas exitosa');
+			  createUser(); // No estoy seguro de qué hace esta función, asegúrate de que sea necesaria aquí
+			  setTasks([]);
 			}
-		})
-		.then(data => {
-			console.log(data)
-		})
-		.catch(error => {
-			console.log(error)
-		})
-		)}
+			return resp.json(); // Esto puede no ser necesario, dependiendo de lo que haga createUser()
+		  })
+		  .then(data => {
+			console.log(data);
+		  })
+		  .catch(error => {
+			console.log(error);
+		  });
+	  };
+
 	//--------------------------------------------------------------API-------------------------------
 
 
@@ -101,32 +102,32 @@ function TodoList() {
 		if (newTask.trim() !== '') {
 		  const taskToAdd = { label: newTask, done: false }; // Crear el objeto con las propiedades requeridas
 		  setTasks([...tasks, taskToAdd]);
+		  updateInfo([...tasks, taskToAdd]);
 		  setNewTask('');
 		}
 	  };
 	  
-  
 	const toggleTask = id => {
 	  const updatedTasks = tasks.map(task =>
-		task.id === id ? { ...task, completed: !task.completed } : task
+		task.id === id ? { ...task, done: !task.done } : task
 	  );
 	  setTasks(updatedTasks);
 	};
   
 	const removeTask = id => {
-	  const updatedTasks = tasks.filter(task => task.id !== id);
-	  setTasks(updatedTasks);
-	};
-
+		const updatedTasks = tasks.filter(task => task.id !== id);
+		setTasks(updatedTasks);
+		updateInfo(updatedTasks);
+	  };
 
 	
 		useEffect(()=>{
 			getInfo();
 		},[])
 	
-		useEffect(()=>{
+		/* useEffect(()=>{
 			updateInfo();
-		},[tasks])
+		},[tasks]) */
 	
 	return (
 	  <div className="container">
@@ -140,11 +141,13 @@ function TodoList() {
 		<button id="btn" onClick={addTask}>Add Task</button>
 		<ul className="list-group">
 
-		  {tasks.map(task => (
-				<li key={task.id} id='task'>
+		  {tasks.map((task, index) => (
+			
+				<li key={index} id='task'>
+					{console.log(task)}
 					<input className="form-check-input me-1" type="checkbox" value="" id="firstCheckbox" onChange={() => toggleTask(task.id)}></input>
-				<span className={task.completed ? 'completed' : ''}>{task.text}</span>
-				{task.completed && ( // El botón se muestra solo si la tarea está completada
+				<span className={task.done ? 'done' : ''}>{task.label}</span>
+				{task.done && ( // El botón se muestra solo si la tarea está completada
 				<button onClick={() => removeTask(task.id)}>
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
 						<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
